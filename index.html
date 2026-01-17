@@ -184,12 +184,9 @@
                         <div id="sourceDetails" class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
                             <div id="standardSource"><input type="text" id="dispatchFrom" placeholder="Dispatched From" class="w-full p-2 border rounded"></div>
                             <div id="noidaSource" class="hidden"><input type="text" id="noidaChallan" placeholder="Challan Number" class="w-full p-2 border rounded"></div>
-                            <div id="campSource" class="hidden space-y-2"><input type="text" id="oCampCode" placeholder="Camp Code" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampClient" placeholder="Client Name" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampCity" placeholder="City" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampAddress" placeholder="Address" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampSPOC" placeholder="SPOC Name" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampSPOCNumber" placeholder="SPOC Number" class="w-full p-2 border rounded">
+                            <div id="campSource" class="hidden space-y-2">
+                                <input type="text" id="campCode" placeholder="Camp Code" class="w-full p-2 border rounded">
+                                <input type="text" id="campClientName" placeholder="Client Name" class="w-full p-2 border rounded">
                             </div>
                             <div id="clinicSource" class="hidden"><input type="text" id="clinicClientName" placeholder="Clinic Client Name" class="w-full p-2 border rounded"></div>
                         </div>
@@ -255,8 +252,13 @@
                                 <input type="text" id="oCampCode" placeholder="Camp Code" class="w-full p-2 border rounded">
                                 <input type="text" id="oCampClient" placeholder="Client Name" class="w-full p-2 border rounded">
                                 <input type="text" id="oCampCity" placeholder="City" class="w-full p-2 border rounded">
+                                <input type="text" id="oCampAddress" placeholder="Address" class="w-full p-2 border rounded">
+                                <input type="text" id="oCampSPOC" placeholder="SPOC Name" class="w-full p-2 border rounded">
+                                <input type="text" id="oCampSPOCNumber" placeholder="SPOC Number" class="w-full p-2 border rounded">
                             </div>
                             <div id="clinicDest" class="hidden"><input type="text" id="oClinicClient" placeholder="Clinic Name" class="w-full p-2 border rounded"></div>
+                            <div id="clinicDest" class="hidden"><input type="text" id="oClinicCity" placeholder="City" class="w-full p-2 border rounded"></div>
+                            <div id="clinicDest" class="hidden"><input type="text" id="oClinicAddress" placeholder="Address" class="w-full p-2 border rounded"></div>                            
                             <input type="text" id="oRequestBy" placeholder="Material Requested By" class="w-full p-2 border rounded font-semibold border-blue-200">
                         </div>
                         <h4 class="font-bold mb-2">Add Items</h4>
@@ -543,5 +545,3 @@
     </script>
 </body>
 </html>
-
-
