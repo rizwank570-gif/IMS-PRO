@@ -24,6 +24,11 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1ff; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+
+        /* Custom file input styling (No longer needed, but kept for general consistency) */
+        input[type="file"]::file-selector-button {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900">
@@ -36,467 +41,630 @@
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-16 items-center">
-                <!-- Logo/Title -->
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center">
-                        <div class="h-10 flex items-center bg-gray-50 px-2 rounded border border-gray-100">
-                            <img src="https://lh3.googleusercontent.com/d/1rWGnTk485-dqc_ADtLn_RuSmDzgomV0U" 
-                                 alt="Redcliffe Labs Logo" 
-                                 class="h-8 w-auto object-contain"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div style="display:none;" class="items-center space-x-2">
-                                <div class="w-8 h-8 bg-redcliffe rounded-full flex items-center justify-center text-white font-bold text-xs">RL</div>
-                                <span class="font-bold text-gray-800">Redcliffe Labs</span>
-                            </div>
-                        </div>
-                        <span class="text-gray-400 font-light text-lg ml-3 border-l pl-3 border-gray-200">IMS Cloud</span>
+    <!-- Login Container -->
+    <div id="app-login" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-red-100">
+            <div class="flex flex-col items-center mb-8">
+                <img src="https://lh3.googleusercontent.com/d/1rWGnTk485-dqc_ADtLn_RuSmDzgomV0U" 
+                     alt="Redcliffe Labs Logo" 
+                     class="h-12 w-auto mb-3 object-contain">
+                <h2 class="text-3xl font-extrabold text-gray-800">IMS Cloud Login</h2>
+                <p class="mt-2 text-sm text-gray-500">Secure access via credentials</p>
+            </div>
+            
+            <form id="authForm" onsubmit="return handleAuth(event)">
+                <div class="space-y-4">
+                    <!-- Username Input -->
+                    <div>
+                        <label for="loginUsername" class="block text-sm font-medium text-gray-700">Official Email ID</label>
+                        <input type="email" id="loginUsername" placeholder="your.name@redcliffelabs.com" class="p-3 border border-gray-300 rounded-lg w-full focus:ring-redcliffe focus:border-redcliffe" required>
                     </div>
-                </div>
-                
-                <!-- Right side controls (Mobile Menu Button + Sync) -->
-                <div class="flex items-center space-x-2 md:space-x-4">
-                    <button onclick="syncData()" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition" title="Refresh Cloud Data">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0014.001 1.077m-1.357 5.865a8 8 0 11-13.333 13.333m8.542-16.666v5h5"></path></svg>
-                    </button>
 
-                    <!-- Mobile Menu Button -->
-                    <button id="mobileMenuButton" class="md:hidden p-2 rounded hover:bg-gray-100 focus:outline-none" aria-label="Toggle navigation">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <!-- Password Input -->
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" class="p-3 border border-gray-300 rounded-lg w-full focus:ring-redcliffe focus:border-redcliffe" required>
+                    </div>
+                    
+                    <button type="submit" id="loginButton" class="w-full bg-redcliffe text-white py-3 rounded-lg font-bold hover:bg-red-800 transition shadow-md">
+                        Log In
                     </button>
                 </div>
-            </div>
-
-            <!-- Menu Links (Toggled on Mobile) -->
-            <div id="mobileMenu" class="hidden md:flex flex-col md:flex-row md:items-center pb-2 md:pb-0 text-sm font-medium border-t md:border-t-0 mt-2 md:mt-0 md:space-x-4">
-                <button onclick="showTab('dashboard')" class="nav-link px-3 py-2 text-redcliffe font-bold w-full text-left md:w-auto">Dashboard</button>
-                <button onclick="showTab('masters')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Masters</button>
-                <button onclick="showTab('inward')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Inward Entry</button>
-                <button onclick="showTab('outward')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Outward/Issue</button>
-                <button onclick="showTab('inventory')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Live Inventory</button>
-                <button onclick="showTab('expenses')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Expenses</button>
-            </div>
+            </form>
         </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto p-4 md:p-6">
-
-        <!-- DASHBOARD TAB (ADVANCED) -->
-        <section id="tab-dashboard" class="tab-content">
-            <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Inventory Command Center</h1>
-            
-            <!-- Row 1: Key Performance Indicators (KPIs) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                
-                <!-- Card 1: Total Stock Value -->
-                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-redcliffe flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase font-semibold text-gray-500">Total Stock Value</p>
-                        <h3 id="stat-value" class="text-3xl font-bold mt-1 text-redcliffe">₹ 0</h3>
-                    </div>
-                    <div class="bg-red-100 p-3 rounded-full text-redcliffe">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l-1 2h10l-1-2m-9 0a2 2 0 100-4 2 2 0 000 4zm7 0a2 2 0 100-4 2 2 0 000 4z"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Card 2: Total Items in Stock -->
-                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-yellow-500 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase font-semibold text-gray-500">Total Material Units</p>
-                        <h3 id="stat-items" class="text-3xl font-bold mt-1">0</h3>
-                    </div>
-                    <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Card 3: Total Hubs Registered -->
-                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase font-semibold text-gray-500">Active Hubs</p>
-                        <h3 id="stat-hubs" class="text-3xl font-bold mt-1">0</h3>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-full text-blue-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Card 4: Cloud Status -->
-                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase font-semibold text-gray-500">Cloud Sync Status</p>
-                        <h3 id="stat-sync" class="text-xl font-bold mt-1 text-green-600">Connected</h3>
-                        <p class="text-xs text-gray-400 mt-1">Realtime sheet connection</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-full text-green-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Column 1 (2/3 width) - Charts & Recent Activity -->
-                <div class="lg:col-span-2 space-y-6">
-                    
-                    <!-- Visualization Placeholder: Stock Value by Category -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                         <h2 class="text-xl font-bold mb-4 flex items-center">📊 Inventory Breakdown by Category (Value)</h2>
-                         <div id="stockCategoryChart" class="h-auto min-h-[16rem] flex flex-col items-center justify-center text-gray-400 p-4">
-                             <!-- Dynamic Content Placeholder -->
-                             <p class="text-lg text-gray-400">Loading chart data...</p>
-                         </div>
-                    </div>
-                    
-                    <!-- Recent Transactions Feed -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h2 class="text-xl font-bold mb-4">🚀 Recent Cloud Activity Feed</h2>
-                        <div id="dashboardRecentActivity" class="divide-y divide-gray-100">
-                            <!-- Dynamic Content -->
-                            <p class="p-4 text-center text-gray-500">Loading recent activity...</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Column 2 (1/3 width) - Quick Actions & Alerts -->
-                <div class="lg:col-span-1 space-y-6">
-                    
-                    <!-- Quick Actions -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h2 class="font-bold text-lg mb-4 text-gray-800">Operational Shortcuts</h2>
-                        <div class="space-y-3">
-                            <button onclick="showTab('inward')" class="w-full p-4 bg-blue-50 rounded-lg text-left hover:bg-blue-600 hover:text-white transition group flex items-center justify-between">
-                                <span class="font-semibold">📦 New Inward Entry</span>
-                                <svg class="w-5 h-5 group-hover:text-white text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </button>
-                            <button onclick="showTab('outward')" class="w-full p-4 bg-orange-50 rounded-lg text-left hover:bg-orange-600 hover:text-white transition group flex items-center justify-between">
-                                <span class="font-semibold">🚚 Issue Material (Outward)</span>
-                                <svg class="w-5 h-5 group-hover:text-white text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                            </button>
-                            <button onclick="showTab('expenses')" class="w-full p-4 bg-green-50 rounded-lg text-left hover:bg-green-600 hover:text-white transition group flex items-center justify-between">
-                                <span class="font-semibold">💰 Log New Expense</span>
-                                <svg class="w-5 h-5 group-hover:text-white text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0v3m0 0v3m0-3h-2m2 0h2m4-3v3m0 0v3m0-3h-2m2 0h2a2 2 0 002-2v-3m-4 0h-4a2 2 0 00-2 2v3m0 0H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v3"></path></svg>
-                            </button>
-                            <button onclick="syncData()" class="w-full p-4 bg-gray-100 rounded-lg text-left hover:bg-redcliffe hover:text-white transition group flex items-center justify-between">
-                                <span class="font-semibold">🔄 Refresh All Data</span>
-                                <svg class="w-5 h-5 group-hover:text-white text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0014.001 1.077m-1.357 5.865a8 8 0 11-13.333 13.333m8.542-16.666v5h5"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Alerts/Info -->
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm border border-red-200">
-                        <h3 class="font-bold text-red-700 mb-2 flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.39 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            Stock Alerts
-                        </h3>
-                        <p class="text-sm text-red-600">Review the 'Live Inventory' tab to check for materials with zero or critically low stock levels (shown in red).</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MASTERS TAB -->
-        <section id="tab-masters" class="tab-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Hub Master -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold mb-4">🏢 Hub Master</h3>
-                    <form id="hubForm" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" id="hubName" placeholder="Hub Name" class="p-2 border rounded w-full" required>
-                            <input type="text" id="hubLocation" placeholder="Location/City" class="p-2 border rounded w-full" required>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" id="hubSpoc" placeholder="SPOC Name" class="p-2 border rounded w-full" required>
-                            <input type="tel" id="hubNumber" placeholder="SPOC Mobile" class="p-2 border rounded w-full" required>
-                        </div>
-                        <textarea id="hubAddress" placeholder="Full Address" class="p-2 border rounded w-full h-20" required></textarea>
-                        <button type="submit" class="w-full bg-redcliffe text-white py-2 rounded font-semibold hover:bg-red-800">Add Hub to Cloud</button>
-                    </form>
-                    <div class="mt-6 overflow-x-auto max-h-60">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 sticky top-0">
-                                <tr><th class="p-2 text-left">Hub Name</th><th class="p-2 text-left">Location</th></tr>
-                            </thead>
-                            <tbody id="hubList"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Material Master -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold mb-4">📦 Material Master</h3>
-                    <form id="materialForm" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" id="matName" placeholder="Material Name" class="p-2 border rounded w-full" required>
-                            <select id="matCategory" class="p-2 border rounded w-full" required>
-                                <option value="">Select Category</option>
-                                <option value="Stationery">Stationery</option>
-                                <option value="Medical Consumables">Medical Consumables</option>
-                                <option value="Kits">Kits</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Equipment">Equipment</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="number" id="matPrice" placeholder="Unit Price (₹)" class="p-2 border rounded w-full" required>
-                            <input type="text" id="matUom" placeholder="UOM (e.g., Pcs, Box, ML)" class="p-2 border rounded w-full" required>
-                        </div>
-                        <button type="submit" class="w-full bg-redcliffe text-white py-2 rounded font-semibold hover:bg-red-800">Add Material to Cloud</button>
-                    </form>
-                    <div class="mt-6 overflow-x-auto max-h-60">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 sticky top-0">
-                                <tr><th class="p-2 text-left">Name</th><th class="p-2 text-left">Price</th></tr>
-                            </thead>
-                            <tbody id="materialList"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- INWARD ENTRY TAB -->
-        <section id="tab-inward" class="tab-content hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-6">Inward Material Entry</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1 border-r pr-0 lg:pr-8">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold mb-1">Inward Type</label>
-                            <select id="inwardType" onchange="toggleInwardSource()" class="w-full p-2 border rounded bg-gray-50">
-                                <option value="Standard">Standard Dispatch</option>
-                                <option value="NoidaWarehouse">Noida Warehouse</option>
-                                <option value="CampReturn">Return from Camp</option>
-                                <option value="ClinicReturn">Return from Clinic</option>
-                            </select>
-                        </div>
-
-                        <div id="sourceDetails" class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-                            <div id="standardSource"><input type="text" id="dispatchFrom" placeholder="Dispatched From (Vendor/Courier)" class="w-full p-2 border rounded"></div>
-                            <div id="noidaSource" class="hidden"><input type="text" id="noidaChallan" placeholder="Challan Number" class="w-full p-2 border rounded"></div>
-                            <div id="campSource" class="hidden space-y-2">
-                                <input type="text" id="campCode" placeholder="Camp Code (Mandatory)" class="w-full p-2 border rounded">
-                                <input type="text" id="campClientName" placeholder="Client Name" class="w-full p-2 border rounded">
+    </div>
+    
+    <!-- Main Application Container (Hidden until authenticated) -->
+    <div id="app-main" class="hidden">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16 items-center">
+                    <!-- Logo/Title -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center">
+                            <div class="h-10 flex items-center bg-gray-50 px-2 rounded border border-gray-100">
+                                <img src="https://lh3.googleusercontent.com/d/1rWGnTk485-dqc_ADtLn_RuSmDzgomV0U" 
+                                     alt="Redcliffe Labs Logo" 
+                                     class="h-8 w-auto object-contain"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div style="display:none;" class="items-center space-x-2">
+                                    <div class="w-8 h-8 bg-redcliffe rounded-full flex items-center justify-center text-white font-bold text-xs">RL</div>
+                                    <span class="font-bold text-gray-800">Redcliffe Labs</span>
+                                </div>
                             </div>
-                            <div id="clinicSource" class="hidden"><input type="text" id="clinicClientName" placeholder="Clinic Client Name" class="w-full p-2 border rounded"></div>
+                            <span class="text-gray-400 font-light text-lg ml-3 border-l pl-3 border-gray-200">IMS Cloud</span>
                         </div>
+                    </div>
+                    
+                    <!-- Right side controls (Mobile Menu Button + Sync + Logout) -->
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <button onclick="syncData()" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition" title="Refresh Cloud Data">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0014.001 1.077m-1.357 5.865a8 8 0 11-13.333 13.333m8.542-16.666v5h5"></path></svg>
+                        </button>
+                        
+                        <button onclick="logout()" class="bg-red-50 p-2 rounded-full hover:bg-red-100 transition" title="Logout">
+                             <svg class="w-6 h-6 text-redcliffe" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        </button>
 
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold mb-1">Delivery Hub</label>
-                            <select id="inwardHub" class="w-full p-2 border rounded hub-select"></select>
+                        <!-- Mobile Menu Button -->
+                        <button id="mobileMenuButton" class="md:hidden p-2 rounded hover:bg-gray-100 focus:outline-none" aria-label="Toggle navigation">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Links (Toggled on Mobile) -->
+                <div id="mobileMenu" class="hidden md:flex flex-col md:flex-row md:items-center pb-2 md:pb-0 text-sm font-medium border-t md:border-t-0 mt-2 md:mt-0 md:space-x-4">
+                    <button onclick="showTab('dashboard')" class="nav-link px-3 py-2 text-redcliffe font-bold w-full text-left md:w-auto">Dashboard</button>
+                    <button onclick="showTab('masters')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Masters</button>
+                    <button onclick="showTab('inward')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Inward Entry</button>
+                    <button onclick="showTab('outward')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Outward/Issue</button>
+                    <button onclick="showTab('inventory')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Live Inventory</button>
+                    <button onclick="showTab('print')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Printing/Docs</button>
+                    <button onclick="showTab('expenses')" class="nav-link px-3 py-2 text-gray-700 hover:text-redcliffe transition w-full text-left md:w-auto">Expenses</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto p-4 md:p-6">
+
+            <!-- DASHBOARD TAB (ADVANCED) -->
+            <section id="tab-dashboard" class="tab-content">
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Inventory Command Center</h1>
+                
+                <!-- Row 1: Key Performance Indicators (KPIs) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    
+                    <!-- Card 1: Total Stock Value -->
+                    <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-redcliffe flex items-center justify-between">
+                        <div>
+                            <p class="text-sm uppercase font-semibold text-gray-500">Total Stock Value</p>
+                            <h3 id="stat-value" class="text-3xl font-bold mt-1 text-redcliffe">₹ 0</h3>
                         </div>
-
-                        <h4 class="font-bold mb-2">Add Items</h4>
-                        <div class="space-y-2">
-                            <select id="cartMaterial" class="w-full p-2 border rounded mat-select"></select>
-                            <input type="number" id="cartQty" placeholder="Quantity" class="w-full p-2 border rounded" min="1">
-                            <button onclick="addToCart('inward')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">+ Add to Cart</button>
+                        <div class="bg-red-100 p-3 rounded-full text-redcliffe">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l-1 2h10l-1-2m-9 0a2 2 0 100-4 2 2 0 000 4zm7 0a2 2 0 100-4 2 2 0 000 4z"></path></svg>
                         </div>
                     </div>
 
-                    <div class="lg:col-span-2">
-                        <h3 class="font-bold text-lg mb-4">Inward Cart</h3>
-                        <div class="overflow-x-auto border rounded-lg mb-4">
+                    <!-- Card 2: Total Items in Stock -->
+                    <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-yellow-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm uppercase font-semibold text-gray-500">Total Material Units</p>
+                            <h3 id="stat-items" class="text-3xl font-bold mt-1">0</h3>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Total Hubs Registered -->
+                    <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm uppercase font-semibold text-gray-500">Active Hubs</p>
+                            <h3 id="stat-hubs" class="text-3xl font-bold mt-1">0</h3>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Cloud Status -->
+                    <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm uppercase font-semibold text-gray-500">Cloud Sync Status</p>
+                            <h3 id="stat-sync" class="text-xl font-bold mt-1 text-green-600">Connected</h3>
+                            <p class="text-xs text-gray-400 mt-1">Realtime sheet connection</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full text-green-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Column 1 (2/3 width) - Charts & Recent Activity -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Visualization Placeholder: Stock Value by Category -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h2 class="text-xl font-bold mb-4 flex items-center">📊 Inventory Breakdown by Category (Value)</h2>
+                            <div id="stockCategoryChart" class="h-auto min-h-[16rem] flex flex-col items-center justify-center text-gray-400 p-4">
+                                <!-- Dynamic Content Placeholder -->
+                                <p class="text-lg text-gray-400">Loading chart data...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Transactions Feed (Modernized) -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h2 class="text-xl font-bold mb-4">🚀 Recent Cloud Activity Feed</h2>
+                            <!-- Removed divide-y class for custom timeline rendering -->
+                            <div id="dashboardRecentActivity"> 
+                                <!-- Dynamic Content -->
+                                <p class="p-4 text-center text-gray-500">Loading recent activity...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 2 (1/3 width) - Quick Actions & Alerts -->
+                    <div class="lg:col-span-1 space-y-6">
+                        
+                        <!-- Quick Actions -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <h2 class="font-bold text-lg mb-4 text-gray-800">Operational Shortcuts</h2>
+                            <div class="space-y-3">
+                                <button onclick="showTab('inward')" class="w-full p-4 bg-blue-50 rounded-lg text-left hover:bg-blue-600 hover:text-white transition group flex items-center justify-between">
+                                    <span class="font-semibold">📦 New Inward Entry</span>
+                                    <svg class="w-5 h-5 group-hover:text-white text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                                <button onclick="showTab('outward')" class="w-full p-4 bg-orange-50 rounded-lg text-left hover:bg-orange-600 hover:text-white transition group flex items-center justify-between">
+                                    <span class="font-semibold">🚚 Issue Material (Outward)</span>
+                                    <svg class="w-5 h-5 group-hover:text-white text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                </button>
+                                <button onclick="showTab('expenses')" class="w-full p-4 bg-green-50 rounded-lg text-left hover:bg-green-600 hover:text-white transition group flex items-center justify-between">
+                                    <span class="font-semibold">💰 Log New Expense</span>
+                                    <svg class="w-5 h-5 group-hover:text-white text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0v3m0 0v3m0-3h-2m2 0h2m4-3v3m0 0v3m0-3h-2m2 0h2a2 2 0 002-2v-3m-4 0h-4a2 2 0 00-2 2v3m0 0H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v3"></path></svg>
+                                </button>
+                                <button onclick="syncData()" class="w-full p-4 bg-gray-100 rounded-lg text-left hover:bg-redcliffe hover:text-white transition group flex items-center justify-between">
+                                    <span class="font-semibold">🔄 Refresh All Data</span>
+                                    <svg class="w-5 h-5 group-hover:text-white text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0014.001 1.077m-1.357 5.865a8 8 0 11-13.333 13.333m8.542-16.666v5h5"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Alerts/Info -->
+                        <div class="bg-red-50 p-4 rounded-xl shadow-sm border border-red-200">
+                            <h3 class="font-bold text-red-700 mb-2 flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.39 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Stock Alerts
+                            </h3>
+                            <p class="text-sm text-red-600">Review the 'Live Inventory' tab to check for materials with zero or critically low stock levels (shown in red).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MASTERS TAB -->
+            <section id="tab-masters" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Hub Master -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4">🏢 Hub Master</h3>
+                        
+                        <form id="hubForm" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="hubName" placeholder="Hub Name" class="p-2 border rounded w-full" required>
+                                <input type="text" id="hubLocation" placeholder="Location/City" class="p-2 border rounded w-full" required>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="hubSpoc" placeholder="SPOC Name" class="p-2 border rounded w-full" required>
+                                <input type="tel" id="hubNumber" placeholder="SPOC Mobile" class="p-2 border rounded w-full" required>
+                            </div>
+                            <textarea id="hubAddress" placeholder="Full Address" class="p-2 border rounded w-full h-20" required></textarea>
+                            <button type="submit" class="w-full bg-redcliffe text-white py-2 rounded font-semibold hover:bg-red-800">Add Hub to Cloud</button>
+                        </form>
+                        <div class="mt-6 overflow-x-auto max-h-60">
                             <table class="w-full text-sm">
-                                <thead class="bg-gray-100">
-                                    <tr><th class="p-3 text-left">Material</th><th class="p-3 text-right">Qty</th><th class="p-3 text-right">Total Value</th><th class="p-3 text-center">Action</th></tr>
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr><th class="p-2 text-left">Hub Name</th><th class="p-2 text-left">Location</th></tr>
                                 </thead>
-                                <tbody id="inwardCartBody"><tr><td colspan="4" class="p-8 text-center text-gray-400">Cart is empty</td></tr></tbody>
+                                <tbody id="hubList"></tbody>
                             </table>
                         </div>
-                        <div class="flex justify-end space-x-4 items-center">
-                            <div class="text-xl font-bold">Total: ₹<span id="inwardTotal">0</span></div>
-                            <button onclick="processTransaction('inward')" class="bg-redcliffe text-white px-8 py-3 rounded-lg font-bold hover:bg-red-800 shadow-lg">Finalize Inward Entry</button>
+                    </div>
+
+                    <!-- Material Master -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4">📦 Material Master</h3>
+
+                        <form id="materialForm" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" id="matName" placeholder="Material Name" class="p-2 border rounded w-full" required>
+                                <select id="matCategory" class="p-2 border rounded w-full" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Stationery">Stationery</option>
+                                    <option value="Medical Consumables">Medical Consumables</option>
+                                    <option value="Kits">Kits</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Equipment">Equipment</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="number" id="matPrice" placeholder="Unit Price (₹)" class="p-2 border rounded w-full" required>
+                                <input type="text" id="matUom" placeholder="UOM (e.g., Pcs, Box, ML)" class="p-2 border rounded w-full" required>
+                            </div>
+                            <button type="submit" class="w-full bg-redcliffe text-white py-2 rounded font-semibold hover:bg-red-800">Add Material to Cloud</button>
+                        </form>
+                        <div class="mt-6 overflow-x-auto max-h-60">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr><th class="p-2 text-left">Name</th><th class="p-2 text-left">Price</th></tr>
+                                </thead>
+                                <tbody id="materialList"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div class="mt-12 overflow-x-auto">
-                    <h3 class="font-bold mb-4">Cloud Inward History (Last 5)</h3>
-                    <table class="w-full text-xs text-left border" id="inward-history-table">
-                        <thead class="bg-gray-50"><tr><th class="p-2">Date</th><th class="p-2">Type</th><th class="p-2">Source</th><th class="p-2">Hub</th><th class="p-2">Items</th></tr></thead>
-                        <tbody id="inwardHistoryBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- OUTWARD / ISSUE TAB -->
-        <section id="tab-outward" class="tab-content hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-6">Material Issue (Outward)</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1 border-r pr-0 lg:pr-8">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold mb-1">Issue To</label>
-                            <select id="outwardType" onchange="toggleOutwardDest()" class="w-full p-2 border rounded bg-gray-50">
-                                <option value="Camp">Camp</option>
-                                <option value="Clinic">Clinic</option>
+            <!-- INWARD ENTRY TAB -->
+            <section id="tab-inward" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-6">Inward Material Entry</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 border-r pr-0 lg:pr-8">
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold mb-1">Inward Type</label>
+                                <select id="inwardType" onchange="toggleInwardSource()" class="w-full p-2 border rounded bg-gray-50">
+                                    <option value="Standard">Standard Dispatch</option>
+                                    <option value="NoidaWarehouse">Noida Warehouse</option>
+                                    <option value="CampReturn">Return from Camp</option>
+                                    <option value="ClinicReturn">Return from Clinic</option>
+                                </select>
+                            </div>
+
+                            <div id="sourceDetails" class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                                <div id="standardSource"><input type="text" id="dispatchFrom" placeholder="Dispatched From (Vendor/Courier)" class="w-full p-2 border rounded"></div>
+                                <div id="noidaSource" class="hidden"><input type="text" id="noidaChallan" placeholder="Challan Number" class="w-full p-2 border rounded"></div>
+                                <div id="campSource" class="hidden space-y-2">
+                                    <input type="text" id="campCode" placeholder="Camp Code (Mandatory)" class="w-full p-2 border rounded">
+                                    <input type="text" id="campClientName" placeholder="Client Name" class="w-full p-2 border rounded">
+                                </div>
+                                <div id="clinicSource" class="hidden"><input type="text" id="clinicClientName" placeholder="Clinic Client Name" class="w-full p-2 border rounded"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold mb-1">Delivery Hub</label>
+                                <select id="inwardHub" class="w-full p-2 border rounded hub-select"></select>
+                            </div>
+
+                            <h4 class="font-bold mb-2">Add Items</h4>
+                            <div class="space-y-2">
+                                <select id="cartMaterial" class="w-full p-2 border rounded mat-select"></select>
+                                <input type="number" id="cartQty" placeholder="Quantity" class="w-full p-2 border rounded" min="1">
+                                <button onclick="addToCart('inward')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">+ Add to Cart</button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <h3 class="font-bold text-lg mb-4">Inward Cart</h3>
+                            <div class="overflow-x-auto border rounded-lg mb-4">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-100">
+                                        <tr><th class="p-3 text-left">Material</th><th class="p-3 text-right">Qty</th><th class="p-3 text-right">Total Value</th><th class="p-3 text-center">Action</th></tr>
+                                    </thead>
+                                    <tbody id="inwardCartBody"><tr><td colspan="4" class="p-8 text-center text-gray-400">Cart is empty</td></tr></tbody>
+                                </table>
+                            </div>
+                            <div class="flex justify-end space-x-4 items-center">
+                                <div class="text-xl font-bold">Total: ₹<span id="inwardTotal">0</span></div>
+                                <button onclick="processTransaction('inward')" class="bg-redcliffe text-white px-8 py-3 rounded-lg font-bold hover:bg-red-800 shadow-lg">Finalize Inward Entry</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- INWARD HISTORY SECTION WITH EXPORT -->
+                    <div class="mt-12 overflow-x-auto">
+                        <h3 class="font-bold mb-4">Cloud Inward History</h3>
+                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">Start Date</label>
+                                <input type="date" id="inwardStartDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">End Date</label>
+                                <input type="date" id="inwardEndDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <button onclick="renderHistory('inward', true)" class="px-4 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 h-10">Filter</button>
+                            <button onclick="exportInwardHistory()" class="px-4 py-2 bg-redcliffe text-white rounded text-sm hover:bg-red-800 h-10 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Export CSV
+                            </button>
+                        </div>
+                        <table class="w-full text-xs text-left border" id="inward-history-table">
+                            <thead class="bg-gray-50"><tr><th class="p-2">Date</th><th class="p-2">Type</th><th class="p-2">Source</th><th class="p-2">Hub</th><th class="p-2">Items</th></tr></thead>
+                            <tbody id="inwardHistoryBody"></tbody>
+                        </table>
+                        <p id="inwardHistoryStatus" class="mt-2 text-sm text-gray-500">Showing last 5 entries.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- OUTWARD / ISSUE TAB -->
+            <section id="tab-outward" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-6">Material Issue (Outward)</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 border-r pr-0 lg:pr-8">
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold mb-1">Issue To</label>
+                                <select id="outwardType" onchange="toggleOutwardDest()" class="w-full p-2 border rounded bg-gray-50">
+                                    <option value="Camp">Camp</option>
+                                    <option value="Clinic">Clinic</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold mb-1">Issue From Hub</label>
+                                <select id="outwardHub" class="w-full p-2 border rounded hub-select"></select>
+                            </div>
+                            <div id="outwardDestDetails" class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                                <div id="campDest" class="space-y-4">
+                                    <input type="text" id="oCampCode" placeholder="Camp Code (Required)" class="w-full p-2 border rounded" required>
+                                    <input type="text" id="oCampClient" placeholder="Client Name" class="w-full p-2 border rounded">
+                                    <input type="text" id="oCampCity" placeholder="City" class="w-full p-2 border rounded">
+                                    <input type="text" id="oCampAddress" placeholder="Address" class="w-full p-2 border rounded">
+                                    <input type="text" id="oCampSPOC" placeholder="SPOC Name" class="w-full p-2 border rounded">
+                                    <input type="text" id="oCampSPOCNumber" placeholder="SPOC Number" class="w-full p-2 border rounded">
+                                </div>
+                                <div id="clinicDest" class="hidden"><input type="text" id="oClinicClient" placeholder="Clinic Name (Required)" class="w-full p-2 border rounded" required></div>
+                                <input type="text" id="oRequestBy" placeholder="Material Requested By (Your Name/Staff Code)" class="w-full p-2 border rounded font-semibold border-blue-200" required>
+                            </div>
+                            <h4 class="font-bold mb-2">Add Items</h4>
+                            <div class="space-y-2">
+                                <select id="outCartMaterial" class="w-full p-2 border rounded mat-select"></select>
+                                <input type="number" id="outCartQty" placeholder="Quantity" class="w-full p-2 border rounded" min="1">
+                                <button onclick="addToCart('outward')" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700">+ Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h3 class="font-bold text-lg mb-4">Outward Cart</h3>
+                            <div class="overflow-x-auto border rounded-lg mb-4">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-100"><tr><th class="p-3 text-left">Material</th><th class="p-3 text-right">Qty</th><th class="p-3 text-center">Action</th></tr></thead>
+                                    <tbody id="outwardCartBody"><tr><td colspan="3" class="p-8 text-center text-gray-400">Cart is empty</td></tr></tbody>
+                                </table>
+                            </div>
+                            <div class="flex justify-end">
+                                <button onclick="processTransaction('outward')" class="bg-redcliffe text-white px-8 py-3 rounded-lg font-bold hover:bg-red-800 shadow-lg">Finalize Issue Material</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- OUTWARD HISTORY SECTION WITH EXPORT -->
+                    <div class="mt-12 overflow-x-auto">
+                        <h3 class="font-bold mb-4">Cloud Outward History</h3>
+                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">Start Date</label>
+                                <input type="date" id="outwardStartDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">End Date</label>
+                                <input type="date" id="outwardEndDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <button onclick="renderHistory('outward', true)" class="px-4 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 h-10">Filter</button>
+                            <button onclick="exportOutwardHistory()" class="px-4 py-2 bg-redcliffe text-white rounded text-sm hover:bg-red-800 h-10 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Export CSV
+                            </button>
+                        </div>
+                        <table class="w-full text-xs text-left border" id="outward-history-table">
+                            <thead class="bg-gray-50"><tr><th class="p-2">Date</th><th class="p-2">To</th><th class="p-2">Destination</th><th class="p-2">Requested By</th><th class="p-2">Hub</th><th class="p-2">Items</th></tr></thead>
+                            <tbody id="outwardHistoryBody"></tbody>
+                        </table>
+                        <p id="outwardHistoryStatus" class="mt-2 text-sm text-gray-500">Showing last 5 entries.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LIVE INVENTORY TAB -->
+            <section id="tab-inventory" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl font-bold">Live Cloud Inventory</h2>
+                        <div class="flex space-x-3 w-full sm:w-auto">
+                            <select id="inventoryHubFilter" onchange="renderInventory()" class="p-2 border rounded bg-gray-50 hub-select flex-grow">
+                                <option value="all">All Hubs (Aggregated View)</option>
+                            </select>
+                            <button onclick="exportInventory()" class="px-4 py-2 bg-redcliffe text-white rounded text-sm hover:bg-red-800 flex items-center flex-shrink-0">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table id="inventory-table" class="w-full text-sm">
+                            <thead class="bg-gray-800 text-white">
+                                <!-- Header content is dynamically set by renderInventory() -->
+                                <tr><th class="p-3">Hub Name</th><th class="p-3">Material</th><th class="p-3">Category</th><th class="text-right p-3">Stock</th><th class="p-3">UOM</th><th class="text-right p-3">Value</th></tr>
+                            </thead>
+                            <tbody id="inventoryBody" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRINTING/DOCS TAB (NEW) -->
+            <section id="tab-print" class="tab-content hidden">
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Document Generation</h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Gate Pass Printing -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <h2 class="text-xl font-bold mb-4 text-blue-700 flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            Gate Pass / Material Transfer Slip
+                        </h2>
+                        <p class="text-gray-600 mb-6 text-sm">Generate a non-returnable Gate Pass for material issue or transfer from a Hub.</p>
+
+                        <form id="gatePassForm" class="space-y-4">
+                            <select id="gpHub" class="w-full p-3 border rounded hub-select" required>
+                                <option value="">Select Issuing Hub</option>
+                            </select>
+                            <input type="text" id="gpDestination" placeholder="Destination (e.g., Client Site, Clinic XYZ)" class="w-full p-3 border rounded" required>
+                            <input type="text" id="gpRequester" placeholder="Requested/Carried By Name" class="w-full p-3 border rounded" required>
+                            <textarea id="gpItems" placeholder="List Items to be included (Qty & Item Name per line, e.g., 50 EDTA Tubes, 1 Printer)" class="w-full p-3 border rounded h-24" required></textarea>
+                            
+                            <button type="button" onclick="printGatePass()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-md">
+                                Print Gate Pass Document (Simulated)
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- RDC Printing -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <h2 class="text-xl font-bold mb-4 text-orange-700 flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                            Returnable Delivery Challan (RDC)
+                        </h2>
+                        <p class="text-gray-600 mb-6 text-sm">Generate an RDC for equipment or material that must be returned later.</p>
+
+                        <form id="rdcForm" class="space-y-4">
+                            <select id="rdcHub" class="w-full p-3 border rounded hub-select" required>
+                                <option value="">Select Issuing Hub</option>
+                            </select>
+                            <input type="text" id="rdcDestination" placeholder="Client/Vendor Destination" class="w-full p-3 border rounded" required>
+                            <label class="block text-sm font-medium pt-2">Expected Return Date</label>
+                            <input type="date" id="rdcReturnDate" class="w-full p-3 border rounded" required>
+                            <textarea id="rdcItems" placeholder="List Items (Qty & Item Name per line, e.g., 1 Laptop, 2 Barcode Scanners)" class="w-full p-3 border rounded h-24" required></textarea>
+                            
+                            <button type="button" onclick="printRDC()" class="w-full bg-orange-600 text-white py-3 rounded-lg font-bold hover:bg-orange-700 transition shadow-md">
+                                Print Returnable Challan (Simulated)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXPENSES TAB -->
+            <section id="tab-expenses" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-6">Expense Ledger Entry</h2>
+                    
+                    <!-- Updated Expense Form -->
+                    <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8 p-4 border rounded-lg bg-gray-50">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-1">Date</label>
+                            <input type="date" id="expDate" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-1">Hub/Location</label>
+                            <select id="expHub" class="w-full p-2 border rounded hub-select" required>
+                                <option value="">Select Hub</option>
                             </select>
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold mb-1">Issue From Hub</label>
-                            <select id="outwardHub" class="w-full p-2 border rounded hub-select"></select>
+                        
+                        <!-- Enhanced Invoice/Attachment instructions -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-1">Invoice Ref / Attachment Link</label>
+                            <input type="text" id="expInvoiceId" placeholder="Paste Google Drive/Cloud URL or Reference ID" class="w-full p-2 border rounded" required>
+                            <p class="text-xs text-gray-500 mt-1 px-1 text-red-500 font-medium">
+                                (For file attachments: Upload PDF/JPG to Google Drive first, then paste the sharing link here.)
+                            </p>
                         </div>
-                        <div id="outwardDestDetails" class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                            <div id="campDest" class="space-y-4">
-                                <input type="text" id="oCampCode" placeholder="Camp Code (Required)" class="w-full p-2 border rounded" required>
-                                <input type="text" id="oCampClient" placeholder="Client Name" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampCity" placeholder="City" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampAddress" placeholder="Address" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampSPOC" placeholder="SPOC Name" class="w-full p-2 border rounded">
-                                <input type="text" id="oCampSPOCNumber" placeholder="SPOC Number" class="w-full p-2 border rounded">
+                        
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium mb-1">Category</label>
+                            <select id="expCategory" onchange="toggleTransportFields()" class="w-full p-2 border rounded" required>
+                                <option value="">Select Category</option>
+                                <option value="Material Transportation">Material Transportation</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Fuel">Fuel</option>
+                                <option value="Food">Food/Refreshment</option>
+                                <option value="Maintenance">Equipment Maintenance</option>
+                                <option value="Miscellaneous">Miscellaneous</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium mb-1">Amount (₹)</label>
+                            <input type="number" id="expAmount" placeholder="Amount" class="w-full p-2 border rounded" required min="1">
+                        </div>
+
+                        <!-- Conditional Fields for Material Transportation -->
+                        <div id="transportFields" class="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-4 hidden border-t pt-4 mt-2">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">From Address</label>
+                                <input type="text" id="expFromAddress" placeholder="Starting Location (e.g., Noida Warehouse)" class="w-full p-2 border rounded">
                             </div>
-                            <div id="clinicDest" class="hidden"><input type="text" id="oClinicClient" placeholder="Clinic Name (Required)" class="w-full p-2 border rounded" required></div>
-                            <input type="text" id="oRequestBy" placeholder="Material Requested By (Your Name/Staff Code)" class="w-full p-2 border rounded font-semibold border-blue-200" required>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">To Address</label>
+                                <input type="text" id="expToAddress" placeholder="Destination Location (e.g., Delhi Hub/Client Site)" class="w-full p-2 border rounded">
+                            </div>
                         </div>
-                        <h4 class="font-bold mb-2">Add Items</h4>
-                        <div class="space-y-2">
-                            <select id="outCartMaterial" class="w-full p-2 border rounded mat-select"></select>
-                            <input type="number" id="outCartQty" placeholder="Quantity" class="w-full p-2 border rounded" min="1">
-                            <button onclick="addToCart('outward')" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700">+ Add to Cart</button>
+                        
+                        <div class="md:col-span-4">
+                            <label class="block text-sm font-medium mb-1">Description</label>
+                            <input type="text" id="expDescription" placeholder="Detailed purpose of expense (e.g., Courier charges, CNG refill)" class="w-full p-2 border rounded" required>
                         </div>
-                    </div>
-                    <div class="lg:col-span-2">
-                        <h3 class="font-bold text-lg mb-4">Outward Cart</h3>
-                        <div class="overflow-x-auto border rounded-lg mb-4">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-100"><tr><th class="p-3 text-left">Material</th><th class="p-3 text-right">Qty</th><th class="p-3 text-center">Action</th></tr></thead>
-                                <tbody id="outwardCartBody"><tr><td colspan="3" class="p-8 text-center text-gray-400">Cart is empty</td></tr></tbody>
-                            </table>
+                        <div class="md:col-span-2 flex items-end">
+                            <button type="submit" class="w-full bg-green-600 text-white py-2 rounded font-semibold hover:bg-green-700">Log Expense</button>
                         </div>
-                        <div class="flex justify-end">
-                            <button onclick="processTransaction('outward')" class="bg-redcliffe text-white px-8 py-3 rounded-lg font-bold hover:bg-red-800 shadow-lg">Finalize Issue Material</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-12 overflow-x-auto">
-                    <h3 class="font-bold mb-4">Cloud Outward History (Last 5)</h3>
-                    <table class="w-full text-xs text-left border" id="outward-history-table">
-                        <thead class="bg-gray-50"><tr><th class="p-2">Date</th><th class="p-2">To</th><th class="p-2">Destination</th><th class="p-2">Requested By</th><th class="p-2">Hub</th><th class="p-2">Items</th></tr></thead>
-                        <tbody id="outwardHistoryBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+                    </form>
 
-        <!-- LIVE INVENTORY TAB -->
-        <section id="tab-inventory" class="tab-content hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Live Cloud Inventory</h2>
-                    <select id="inventoryHubFilter" onchange="renderInventory()" class="p-2 border rounded bg-gray-50 hub-select">
-                        <option value="all">All Hubs (Aggregated View)</option>
-                    </select>
-                </div>
-                <div class="overflow-x-auto border rounded-xl">
-                    <table id="inventory-table" class="w-full text-sm">
-                        <thead class="bg-gray-800 text-white">
-                            <!-- Header content is dynamically set by renderInventory() -->
-                            <tr><th class="p-3">Hub Name</th><th class="p-3">Material</th><th class="p-3">Category</th><th class="text-right p-3">Stock</th><th class="p-3">UOM</th><th class="text-right p-3">Value</th></tr>
-                        </thead>
-                        <tbody id="inventoryBody" class="divide-y"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- EXPENSES TAB -->
-        <section id="tab-expenses" class="tab-content hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-6">Expense Ledger Entry</h2>
-                
-                <!-- Updated Expense Form -->
-                <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8 p-4 border rounded-lg bg-gray-50">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Date</label>
-                        <input type="date" id="expDate" class="w-full p-2 border rounded" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Hub/Location</label>
-                        <select id="expHub" class="w-full p-2 border rounded hub-select" required>
-                            <option value="">Select Hub</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Enhanced Invoice/Attachment instructions -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Invoice Ref / Attachment Link</label>
-                        <input type="text" id="expInvoiceId" placeholder="Paste Google Drive/Cloud URL or Reference ID" class="w-full p-2 border rounded" required>
-                        <p class="text-xs text-gray-500 mt-1 px-1 text-red-500 font-medium">
-                            (For file attachments: Upload PDF/JPG to Google Drive first, then paste the sharing link here.)
-                        </p>
-                    </div>
-                    
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium mb-1">Category</label>
-                        <select id="expCategory" onchange="toggleTransportFields()" class="w-full p-2 border rounded" required>
-                            <option value="">Select Category</option>
-                            <option value="Material Transportation">Material Transportation</option>
-                            <option value="Travel">Travel</option>
-                            <option value="Fuel">Fuel</option>
-                            <option value="Food">Food/Refreshment</option>
-                            <option value="Maintenance">Equipment Maintenance</option>
-                            <option value="Miscellaneous">Miscellaneous</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium mb-1">Amount (₹)</label>
-                        <input type="number" id="expAmount" placeholder="Amount" class="w-full p-2 border rounded" required min="1">
-                    </div>
-
-                    <!-- Conditional Fields for Material Transportation -->
-                    <div id="transportFields" class="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-4 hidden border-t pt-4 mt-2">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">From Address</label>
-                            <input type="text" id="expFromAddress" placeholder="Starting Location (e.g., Noida Warehouse)" class="w-full p-2 border rounded">
+                    <!-- EXPENSE HISTORY SECTION WITH EXPORT -->
+                    <div class="mt-8 overflow-x-auto">
+                        <h3 class="font-bold mb-4">Cloud Expense History</h3>
+                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">Start Date</label>
+                                <input type="date" id="expenseStartDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <div class="flex-grow">
+                                <label class="block text-xs font-medium mb-1">End Date</label>
+                                <input type="date" id="expenseEndDate" class="p-2 border rounded text-sm w-full">
+                            </div>
+                            <button onclick="renderExpenses(true)" class="px-4 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 h-10">Filter</button>
+                            <button onclick="exportExpenseLedger()" class="px-4 py-2 bg-redcliffe text-white rounded text-sm hover:bg-red-800 h-10 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Export CSV
+                            </button>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">To Address</label>
-                            <input type="text" id="expToAddress" placeholder="Destination Location (e.g., Delhi Hub/Client Site)" class="w-full p-2 border rounded">
-                        </div>
+                        <table class="w-full text-xs text-left border" id="expense-history-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="p-2">Date</th>
+                                    <th class="p-2">Hub</th>
+                                    <th class="p-2">Invoice Link/Ref</th>
+                                    <th class="p-2">Category</th>
+                                    <th class="p-2">Description/Route</th>
+                                    <th class="p-2 text-right">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseHistoryBody">
+                                <tr><td colspan="6" class="p-4 text-center text-gray-400">Loading expenses...</td></tr>
+                            </tbody>
+                        </table>
+                        <p id="expenseHistoryStatus" class="mt-2 text-sm text-gray-500">Showing last 100 entries.</p>
                     </div>
-                    
-                    <div class="md:col-span-4">
-                        <label class="block text-sm font-medium mb-1">Description</label>
-                        <input type="text" id="expDescription" placeholder="Detailed purpose of expense (e.g., Courier charges, CNG refill)" class="w-full p-2 border rounded" required>
-                    </div>
-                    <div class="md:col-span-2 flex items-end">
-                         <button type="submit" class="w-full bg-green-600 text-white py-2 rounded font-semibold hover:bg-green-700">Log Expense</button>
-                    </div>
-                </form>
-
-                <div class="mt-8 overflow-x-auto">
-                    <h3 class="font-bold mb-4">Cloud Expense History (Last 100 Entries)</h3>
-                    <table class="w-full text-xs text-left border" id="expense-history-table">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="p-2">Date</th>
-                                <th class="p-2">Hub</th>
-                                <th class="p-2">Invoice Link/Ref</th>
-                                <th class="p-2">Category</th>
-                                <th class="p-2">Description/Route</th>
-                                <th class="p-2 text-right">Amount (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expenseHistoryBody">
-                            <tr><td colspan="6" class="p-4 text-center text-gray-400">Loading expenses...</td></tr>
-                        </tbody>
-                    </table>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
+    </div>
 
     <div id="toast" class="fixed bottom-5 right-5 hidden px-6 py-3 rounded-lg shadow-2xl text-white font-bold z-[100]"></div>
 
     <script>
         /** CONFIGURATION: Paste your Google Web App URL here **/
-        const SHEET_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-qnaIIZARn0nQiMkML7K3dmdN4MMEWOlG-7rhr0GmrBpMNsSUZXvO-JPpXWuY2Lzl/exec";
-        const STAFF_CODE = "9799";
+        const SHEET_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJ5YjjzUyRjQZP1GXjR4ufaIUlodPtu2qzA08mxE3TplOQeGyON-y0F8GEMC3rS8S4/exec";
+        const STAFF_CODE = "RCL9799";
+        
+        const MIN_SYNC_TIME = 3000; // 3 seconds
+        const SESSION_KEY = 'redcliffe_ims_session';
+
+        // Hardcoded Credentials
+        const VALID_USERNAME = "rizwan.ahmad@redcliffelabs.com";
+        const VALID_PASSWORD = "Rizwan@rcl9799"; 
 
         // Local State
         let hubs = [];
@@ -508,13 +676,88 @@
         let activeInwardCart = [];
         let activeOutwardCart = [];
         let grandTotalValue = 0; // Global state for Dashboard KPI
+        let isAuthenticated = false;
+        let currentAuthUsername = ''; // Changed from currentAuthEmail
 
-        // App Initializer
+
+        // ----------------------------------------------------------------
+        // AUTHENTICATION LOGIC (Updated to Username/Password)
+        // ----------------------------------------------------------------
+
         window.onload = function() {
-            syncData();
+            checkSession();
             setupMobileMenuToggle();
             setDefaultDate(); 
         };
+
+        function checkSession() {
+            const token = localStorage.getItem(SESSION_KEY);
+            if (token) {
+                isAuthenticated = true;
+                currentAuthUsername = localStorage.getItem('auth_username') || 'User';
+                showApp(true);
+                syncData(); // Start data sync after successful session check
+            } else {
+                showApp(false);
+            }
+        }
+
+        function showApp(loggedIn) {
+            document.getElementById('app-login').classList.toggle('hidden', loggedIn);
+            document.getElementById('app-main').classList.toggle('hidden', !loggedIn);
+        }
+
+        async function handleAuth(event) {
+            event.preventDefault();
+            
+            const usernameInput = document.getElementById('loginUsername').value;
+            const passwordInput = document.getElementById('loginPassword').value;
+
+            if (!usernameInput || !passwordInput) {
+                return toast("Please enter both username and password.", "error");
+            }
+
+            showLoading(true);
+
+            // Simulate network delay / backend check
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            try {
+                if (usernameInput === VALID_USERNAME && passwordInput === VALID_PASSWORD) {
+                    // Success
+                    localStorage.setItem(SESSION_KEY, 'valid_session_token_' + Date.now());
+                    localStorage.setItem('auth_username', usernameInput);
+                    isAuthenticated = true;
+                    currentAuthUsername = usernameInput;
+                    toast("Login successful! Welcome.", "success");
+                    document.getElementById('loginPassword').value = '';
+                    showApp(true);
+                    syncData();
+                } else {
+                    // Failure
+                    toast("Invalid credentials. Please check your username and password.", "error");
+                }
+            } catch (err) {
+                console.error("Login Error:", err);
+                toast("Login failed due to an unexpected error.", "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem('auth_username');
+            isAuthenticated = false;
+            currentAuthUsername = '';
+            showApp(false);
+            toast("Logged out successfully.", "success");
+        }
+
+
+        // ----------------------------------------------------------------
+        // EXISTING APPLICATION LOGIC
+        // ----------------------------------------------------------------
 
         function setupMobileMenuToggle() {
             const button = document.getElementById('mobileMenuButton');
@@ -538,20 +781,34 @@
         function setDefaultDate() {
             const today = new Date().toISOString().split('T')[0];
             const expDate = document.getElementById('expDate');
+            const rdcReturnDate = document.getElementById('rdcReturnDate');
             if (expDate) {
                 expDate.value = today;
+            }
+            if (rdcReturnDate) {
+                // Set RDC return date a week from now as a sensible default
+                const nextWeek = new Date();
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                rdcReturnDate.value = nextWeek.toISOString().split('T')[0];
             }
         }
 
 
         async function syncData() {
+            if (!isAuthenticated) return; 
+
             if (!SHEET_SCRIPT_URL.startsWith("https")) {
                 toast("Please set the SHEET_SCRIPT_URL first!", "error");
                 return;
             }
             showLoading(true);
+            
+            const startTime = Date.now();
+            
             try {
                 const response = await fetch(`${SHEET_SCRIPT_URL}?action=getData`);
+                // Note: For 'no-cors' fetches, response.json() will fail. 
+                // Assuming GAS is configured to return JSON properly for GET requests (typical GAS setup).
                 const data = await response.json();
                 
                 hubs = data.hubs || [];
@@ -563,17 +820,24 @@
 
                 updateDropdowns();
                 renderMasters();
-                renderInventory(); // This updates grandTotalValue and the Inventory tab
-                renderHistory(); // <--- FIX APPLIED HERE
-                renderExpenses(); 
-                updateDashboardStats(); // Updates stat-hubs and stat-items
-                renderDashboardActivity(); // Updates chart and activity feed
+                renderInventory(); 
+                renderHistory('inward', false); 
+                renderHistory('outward', false);
+                renderExpenses(false); 
+                updateDashboardStats(); 
+                renderDashboardActivity(); 
+                
                 toast("Cloud Data Synced");
             } catch (err) {
-                console.error(err);
+                console.error("Sync Data Error:", err);
                 toast("Sync failed. Check App Script Deployment.", "error");
             } finally {
-                showLoading(false);
+                const elapsedTime = Date.now() - startTime;
+                const delay = Math.max(0, MIN_SYNC_TIME - elapsedTime);
+                
+                setTimeout(() => {
+                    showLoading(false);
+                }, delay);
             }
         }
 
@@ -586,8 +850,11 @@
                     body: JSON.stringify({ action: 'saveMaster', type, data })
                 });
                 toast(`Saving ${type}...`);
-                setTimeout(syncData, 2000);
-            } catch (err) { toast("Error saving master", "error"); }
+                setTimeout(syncData, 2000); 
+            } catch (err) { 
+                console.error("Save Master Error:", err);
+                toast("Error saving master", "error"); 
+            }
         }
         
         async function logExpense(data) {
@@ -616,6 +883,7 @@
                 toast("Expense logged successfully. Syncing data...");
                 setTimeout(syncData, 2500);
             } catch (err) {
+                console.error("Log Expense Error:", err);
                 toast("Error logging expense", "error");
             }
         }
@@ -638,7 +906,6 @@
                 else if(transactionType === 'CampReturn') sourceInfo = "Camp: " + document.getElementById('campCode').value;
                 else sourceInfo = "Clinic: " + document.getElementById('clinicClientName').value;
                 
-                // Set default if sourceInfo is empty
                 if (!sourceInfo) sourceInfo = `(${transactionType} Entry)`;
             } else {
                 reqBy = document.getElementById('oRequestBy').value;
@@ -671,14 +938,17 @@
                         transactionType: transactionType,
                         items: cart,
                         date: new Date().toLocaleString(),
-                        destinationDetails: destinationDetails // Pass destination details for outward
+                        destinationDetails: destinationDetails 
                     })
                 });
                 if(type === 'inward') activeInwardCart = []; else activeOutwardCart = [];
                 renderCart(type);
                 toast("Submitting to Cloud...");
                 setTimeout(syncData, 2500);
-            } catch (err) { toast("Transaction failed", "error"); }
+            } catch (err) { 
+                console.error("Transaction Error:", err);
+                toast("Transaction failed", "error"); 
+            }
         }
 
         // Feature: Cart Logic
@@ -755,7 +1025,7 @@
             if(type === 'inward') activeInwardCart.splice(idx, 1); else activeOutwardCart.splice(idx, 1);
             renderCart(type);
         }
-
+        
         // Feature: UI Rendering
         function renderMasters() {
             document.getElementById('hubList').innerHTML = hubs.map(h => `<tr class="border-b"><td class="p-2">${h.name}</td><td class="p-2">${h.location}</td></tr>`).join('');
@@ -889,7 +1159,7 @@
             const chartEl = document.getElementById('stockCategoryChart');
             
             if (totalItems === 0) {
-                chartEl.innerHTML = `<p class="text-lg text-gray-400">Inventory data is currently empty.</p>`;
+                chartEl.innerHTML = `<p class="text-lg text-gray-400">Inventory data is currently empty or loading.</p>`;
                 return;
             }
             
@@ -926,38 +1196,107 @@
             chartHTML += `</div>`;
             chartEl.innerHTML = chartHTML;
         }
-
         
-        function renderExpenses() {
+        /** 
+         * Revised filterHistory logic to use reliable YYYY-MM-DD string comparison 
+         * instead of ambiguous Date object creation, ensuring filter accuracy.
+         */
+        function filterHistory(historyArray, type) {
+            const startDateStr = document.getElementById(`${type}StartDate`)?.value;
+            const endDateStr = document.getElementById(`${type}EndDate`)?.value;
+            
+            if (!startDateStr && !endDateStr) {
+                return historyArray;
+            }
+
+            return historyArray.filter(item => {
+                if (!item.date) return false;
+
+                let itemDateNormalized;
+                try {
+                    // Normalize the date format of the item string to YYYY-MM-DD for reliable comparison
+                    const dateObj = new Date(item.date);
+                    
+                    if (isNaN(dateObj.getTime())) {
+                         // Fallback attempt for common locale formats (e.g., DD/MM/YYYY)
+                         const datePart = item.date.split(' ')[0];
+                         const parts = datePart.split('/');
+                         if (parts.length === 3) {
+                             // Assuming DD/MM/YYYY format for this specific fallback case
+                             itemDateNormalized = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                         } else {
+                             return false; 
+                         }
+                    } else {
+                        itemDateNormalized = dateObj.toISOString().split('T')[0];
+                    }
+
+                } catch (e) {
+                    console.error(`Error parsing date ${item.date}:`, e);
+                    return false; 
+                }
+
+                let isAfterStart = true;
+                if (startDateStr) {
+                    isAfterStart = itemDateNormalized >= startDateStr;
+                }
+
+                let isBeforeEnd = true;
+                if (endDateStr) {
+                    isBeforeEnd = itemDateNormalized <= endDateStr;
+                }
+                
+                return isAfterStart && isBeforeEnd;
+            });
+        }
+        
+        function renderExpenses(applyFilter = false) {
             const body = document.getElementById('expenseHistoryBody');
-            if (expenseLedger.length === 0) {
+            const statusEl = document.getElementById('expenseHistoryStatus');
+            
+            let expenses = expenseLedger;
+            let limit = 100; // Default limit for display
+            let statusText = `Showing last ${limit} entries.`;
+
+            if (applyFilter) {
+                expenses = filterHistory(expenseLedger, 'expense');
+                if (expenses.length > 0) {
+                     limit = expenses.length;
+                     statusText = `Showing ${expenses.length} entries matching filter.`;
+                } else {
+                     statusText = `No entries matching filter.`;
+                }
+            }
+            
+            statusEl.innerText = statusText;
+
+            if (expenses.length === 0 && applyFilter) {
+                body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No expenses logged yet matching the filter criteria.</td></tr>`;
+                return;
+            } else if (expenses.length === 0) {
                 body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No expenses logged yet.</td></tr>`;
                 return;
             }
+
+            const isURL = (str) => { return str && (str.startsWith('http://') || str.startsWith('https://')); };
             
-            const isURL = (str) => {
-                // Simple URL check for display purposes
-                return str && (str.startsWith('http://') || str.startsWith('https://'));
-            };
+            // Slice the expenses list only if not filtered, keeping the full list if filtered.
+            const displayExpenses = applyFilter ? expenses : expenses.slice(0, limit);
 
-
-            body.innerHTML = expenseLedger.slice(0, 100).map(e => {
+            body.innerHTML = displayExpenses.map(e => {
                 const amount = parseFloat(e.amount);
                 let descriptionCell = e.description;
 
-                // Check for transportation details and format description
                 if (e.category === 'Material Transportation' && e.fromAddress && e.toAddress) {
                     descriptionCell = `Route: ${e.fromAddress} <span class="text-gray-400">-></span> ${e.toAddress} <br><span class="text-xs text-gray-500">${e.description}</span>`;
                 }
                 
-                // Handle Invoice Link/Ref
                 let invoiceCellContent;
                 if (e.invoiceId && isURL(e.invoiceId)) {
                     invoiceCellContent = `<a href="${e.invoiceId}" target="_blank" class="text-blue-600 hover:text-blue-800 underline font-semibold text-xs">View Link</a>`;
                 } else {
                     invoiceCellContent = `<span class="font-mono text-xs">${e.invoiceId || 'N/A'}</span>`;
                 }
-
 
                 return `<tr class="border-b hover:bg-red-50">
                     <td class="p-2 whitespace-nowrap">${e.date}</td>
@@ -971,28 +1310,47 @@
         }
 
 
-        function renderHistory() {
-            // FIX: Added checks for empty arrays and robust property access with fallbacks.
-            const inwardBody = document.getElementById('inwardHistoryBody');
-            if (inwardHistory.length === 0) {
-                inwardBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No inward history found.</td></tr>`;
+        function renderHistory(type, applyFilter = false) {
+            const history = type === 'inward' ? inwardHistory : outwardHistory;
+            const bodyId = type === 'inward' ? 'inwardHistoryBody' : 'outwardHistoryBody';
+            const statusId = type === 'inward' ? 'inwardHistoryStatus' : 'outwardHistoryStatus';
+            const colSpan = type === 'inward' ? 5 : 6;
+
+            const filteredHistory = applyFilter ? filterHistory(history, type) : history;
+            let limit = 5;
+            
+            // If filters are applied, or if we explicitly called renderHistory(type, true), show all results.
+            if (applyFilter || document.getElementById(`${type}StartDate`).value || document.getElementById(`${type}EndDate`).value) {
+                 limit = filteredHistory.length;
+                 document.getElementById(statusId).innerText = `Showing ${filteredHistory.length} entries matching filter.`;
             } else {
-                // Assuming properties: date, type (transactionType), sourceInfo, hubName, items
-                inwardBody.innerHTML = inwardHistory.slice(0, 5).map(h => `<tr class="border-b hover:bg-gray-50">
-                    <td class="p-2 whitespace-nowrap">${h.date || 'N/A'}</td>
-                    <td class="p-2">${h.type || 'N/A'}</td>
-                    <td class="p-2">${h.sourceInfo || 'N/A'}</td>
-                    <td class="p-2">${h.hubName || 'Unknown Hub'}</td>
-                    <td class="p-2">${h.items || 0}</td>
-                </tr>`).join('');
+                 // For initial load or non-filtered view
+                 limit = 5;
+                 document.getElementById(statusId).innerText = `Showing last 5 entries.`;
             }
 
-            const outwardBody = document.getElementById('outwardHistoryBody');
-            if (outwardHistory.length === 0) {
-                outwardBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No outward history found.</td></tr>`;
-            } else {
-                // Assuming properties: date, to (destination type), dest (name/code), req (requested by), hub (issuing hub name), items
-                outwardBody.innerHTML = outwardHistory.slice(0, 5).map(h => `<tr class="border-b hover:bg-gray-50">
+            const historySlice = filteredHistory.slice(0, limit);
+            const body = document.getElementById(bodyId);
+
+            if (historySlice.length === 0) {
+                body.innerHTML = `<tr><td colspan="${colSpan}" class="p-4 text-center text-gray-400">No history found${applyFilter ? ' matching the filters.' : '.'}</td></tr>`;
+                return;
+            } 
+            
+            if (type === 'inward') {
+                body.innerHTML = historySlice.map(h => {
+                    // Fallback logic for hub name
+                    const hubName = hubs.find(hub => hub.id === h.hubId)?.name || h.hubName || 'Unknown Hub';
+                    return `<tr class="border-b hover:bg-gray-50">
+                        <td class="p-2 whitespace-nowrap">${h.date || 'N/A'}</td>
+                        <td class="p-2">${h.type || 'N/A'}</td>
+                        <td class="p-2">${h.sourceInfo || 'N/A'}</td>
+                        <td class="p-2">${hubName}</td>
+                        <td class="p-2">${h.items || 0}</td>
+                    </tr>`;
+                }).join('');
+            } else { // outward
+                body.innerHTML = historySlice.map(h => `<tr class="border-b hover:bg-gray-50">
                     <td class="p-2 whitespace-nowrap">${h.date || 'N/A'}</td>
                     <td class="p-2">${h.to || 'N/A'}</td>
                     <td class="p-2">${h.dest || 'N/A'}</td>
@@ -1008,34 +1366,98 @@
             
             // Combine and sort recent transactions
             const combinedHistory = [
-                ...inwardHistory.slice(0, 10).map(i => ({...i, type: 'INWARD', dateObj: new Date(i.date)})),
-                ...outwardHistory.slice(0, 10).map(o => ({...o, type: 'OUTWARD', dateObj: new Date(o.date)}))
+                ...inwardHistory.slice(0, 10).map(i => {
+                    const hubName = hubs.find(hub => hub.id === i.hubId)?.name || i.hubName || 'Unknown Hub';
+                    return {
+                        ...i, 
+                        type: 'INWARD', 
+                        dateObj: new Date(i.date), 
+                        itemsCount: i.items, 
+                        hub: hubName, 
+                        source: i.sourceInfo,
+                        transactionType: i.type || 'Standard', 
+                        req: STAFF_CODE 
+                    };
+                }),
+                ...outwardHistory.slice(0, 10).map(o => ({
+                    ...o, 
+                    type: 'OUTWARD', 
+                    dateObj: new Date(o.date), 
+                    itemsCount: o.items, 
+                    hub: o.hub, 
+                    source: o.dest,
+                    req: o.req
+                }))
             ].sort((a, b) => b.dateObj - a.dateObj).slice(0, 7); // Show 7 most recent overall
 
             if (combinedHistory.length === 0) {
                 activityBody.innerHTML = `<p class="p-4 text-center text-gray-500">No recent activity found.</p>`;
                 return;
             }
+            
+            // Adding a slight top padding for timeline aesthetic
+            activityBody.classList.add('pt-2'); 
 
-            activityBody.innerHTML = combinedHistory.map(item => {
+            activityBody.innerHTML = combinedHistory.map((item, index, array) => {
                 const isOutward = item.type === 'OUTWARD';
-                const color = isOutward ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800';
-                const icon = isOutward ? '🚚' : '📦';
+                const typeText = isOutward ? 'Material Issued' : 'Material Received';
+                
+                // Color coding: Green for Inward, Orange for Outward
+                const dotClasses = isOutward 
+                    ? 'bg-orange-600 text-white' 
+                    : 'bg-green-600 text-white';
+                
+                const titleClasses = isOutward ? 'text-orange-700' : 'text-green-700';
+
+                const iconSvg = isOutward 
+                    ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>` // Send
+                    : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10m-8-4l8 4"></path></svg>`; // Box
+
+                // REFINED DESCRIPTION LOGIC based on user requirements
                 const description = isOutward 
-                    ? `Issued to ${item.dest || 'N/A'} (${item.to || 'N/A'}) from ${item.hub || 'N/A'}`
-                    : `Received (${item.type || 'N/A'}) at ${item.hubName || 'N/A'} from ${item.sourceInfo || 'N/A'}`;
+                    ? `To: ${item.source || 'N/A'} (Requested by: ${item.req || 'Staff'})`
+                    : `Source Type: ${item.transactionType || 'Standard'} (Details: ${item.source || 'N/A'})`;
                 
                 // Handle invalid dates gracefully
-                const itemDate = item.dateObj && !isNaN(item.dateObj) 
-                    ? item.dateObj.toLocaleDateString('en-GB') + ' ' + item.dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    : 'Unknown Date';
+                const itemTime = item.dateObj && !isNaN(item.dateObj.getTime())
+                    ? item.dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : 'Time N/A';
+                
+                const itemDate = item.dateObj && !isNaN(item.dateObj.getTime())
+                    ? item.dateObj.toLocaleDateString('en-GB')
+                    : 'Date N/A';
+                    
+                const isLast = index === array.length - 1;
+                const lineClass = isLast ? 'h-0' : 'h-full'; // Hide the line for the last item
 
                 return `
-                    <div class="flex items-start space-x-4 p-3 hover:bg-gray-50">
-                        <div class="w-8 h-8 flex items-center justify-center rounded-full ${color} flex-shrink-0 font-semibold">${icon}</div>
-                        <div class="flex-grow">
-                            <p class="font-semibold text-sm">${description}</p>
-                            <p class="text-xs text-gray-500 mt-1">${item.items || 0} items recorded. <span class="ml-2">${itemDate}</span></p>
+                    <div class="flex space-x-4">
+                        <!-- Timeline Dot -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center ${dotClasses} shadow-md z-10 flex-shrink-0">
+                                ${iconSvg}
+                            </div>
+                            <div class="w-px ${lineClass} bg-gray-200 -mt-1 -mb-1"></div>
+                        </div>
+                        
+                        <!-- Content Card -->
+                        <div class="flex-grow bg-gray-50 p-4 border rounded-xl shadow-sm -mt-1 mb-4 hover:shadow-md transition duration-200">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="font-bold text-base ${titleClasses}">${typeText}</span>
+                                <span class="text-xs text-gray-500 whitespace-nowrap">${itemTime}, ${itemDate}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm mb-2">${description}</p>
+                            
+                            <div class="flex space-x-6 text-xs text-gray-600 pt-2 border-t border-gray-100">
+                                <span class="flex items-center space-x-1">
+                                    <svg class="w-4 h-4 text-redcliffe" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                    <span>${item.itemsCount || 0} Items</span>
+                                </span>
+                                <span class="flex items-center space-x-1">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span class="font-medium">${item.hub || 'N/A'}</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1056,6 +1478,197 @@
             document.getElementById('stat-hubs').innerText = hubs.length;
             // stat-value and stat-items are updated inside renderInventory()
         }
+        
+        // --- Print Functions (Simulation) ---
+        
+        function printGatePass() {
+            const hub = document.getElementById('gpHub').value;
+            const dest = document.getElementById('gpDestination').value;
+            const requester = document.getElementById('gpRequester').value;
+            const items = document.getElementById('gpItems').value;
+            
+            if (!hub || !dest || !requester || !items) {
+                return toast("Please fill all required fields for Gate Pass generation.", "error");
+            }
+            
+            // In a real application, this would trigger a PDF generation API call.
+            toast("Gate Pass generation request simulated. Document ready for printing.", "success");
+            document.getElementById('gatePassForm').reset();
+            updateDropdowns(); // Re-select Hub dropdown defaults
+        }
+
+        function printRDC() {
+            const hub = document.getElementById('rdcHub').value;
+            const dest = document.getElementById('rdcDestination').value;
+            const returnDate = document.getElementById('rdcReturnDate').value;
+            const items = document.getElementById('rdcItems').value;
+
+            if (!hub || !dest || !returnDate || !items) {
+                return toast("Please fill all required fields for RDC generation.", "error");
+            }
+            
+            // In a real application, this would trigger a PDF generation API call.
+            toast(`Returnable Delivery Challan (RDC) for ${dest} simulated. Return Date: ${returnDate}`, "success");
+            document.getElementById('rdcForm').reset();
+            setDefaultDate();
+            updateDropdowns(); // Re-select Hub dropdown defaults
+        }
+
+
+        // --- Export Utility Functions ---
+
+        function downloadCsv(headers, rows, filename) {
+            let csv = [];
+            csv.push(headers.map(h => `"${h}"`).join(','));
+            rows.forEach(row => {
+                csv.push(row.map(cell => {
+                    let text = String(cell).trim().replace(/"/g, '""');
+                    // Remove currency symbols/formatting for clean numbers
+                    text = text.replace(/₹|,/g, '').trim(); 
+                    return `"${text}"`;
+                }).join(','));
+            });
+
+            const csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast("Export started successfully.");
+        }
+
+        function exportInwardHistory() {
+            // Apply filtering before export
+            const filteredData = filterHistory(inwardHistory, 'inward');
+            
+            if (filteredData.length === 0) return toast("No data to export in this range.", "error");
+            
+            // Map hubId to hubName for CSV export
+            const dataForExport = filteredData.map(h => {
+                const hubName = hubs.find(hub => hub.id === h.hubId)?.name || h.hubName || 'Unknown Hub';
+                return { ...h, hubName: hubName };
+            });
+
+            const csvHeaders = ['Date', 'Type', 'Source Info', 'Hub Name', 'Item Count'];
+            const csvRows = dataForExport.map(h => [
+                h.date || '',
+                h.type || '',
+                h.sourceInfo || '',
+                h.hubName || '',
+                h.items || 0
+            ]);
+            
+            downloadCsv(csvHeaders, csvRows, 'redcliffe_inward_history.csv');
+        }
+
+        function exportOutwardHistory() {
+            const filteredData = filterHistory(outwardHistory, 'outward');
+            
+            if (filteredData.length === 0) return toast("No data to export in this range.", "error");
+
+            const csvHeaders = ['Date', 'To Type', 'Destination Name/Code', 'Requested By', 'Issuing Hub', 'Item Count'];
+            const csvRows = filteredData.map(h => [
+                h.date || '',
+                h.to || '',
+                h.dest || '',
+                h.req || '',
+                h.hub || '',
+                h.items || 0
+            ]);
+            
+            downloadCsv(csvHeaders, csvRows, 'redcliffe_outward_history.csv');
+        }
+
+        function exportExpenseLedger() {
+            // Expenses also use the date filter logic
+            const filteredData = filterHistory(expenseLedger, 'expense'); 
+            
+            if (filteredData.length === 0) return toast("No data to export in this range.", "error");
+
+            const csvHeaders = ['Date', 'Hub ID', 'Hub Name', 'Invoice Ref/Link', 'Category', 'Description', 'From Address', 'To Address', 'Amount (INR)', 'Staff Code'];
+            const csvRows = filteredData.map(e => [
+                e.date,
+                e.hubId,
+                e.hubName,
+                e.invoiceId,
+                e.category,
+                e.description,
+                e.fromAddress,
+                e.toAddress,
+                e.amount,
+                e.staffCode
+            ]);
+            
+            downloadCsv(csvHeaders, csvRows, 'redcliffe_expense_ledger.csv');
+        }
+        
+        function exportInventory() {
+            const filter = document.getElementById('inventoryHubFilter').value;
+            const isAllHubsView = (filter === 'all' || filter === ''); 
+            const filename = isAllHubsView ? 'redcliffe_inventory_all_hubs.csv' : `redcliffe_inventory_${hubs.find(h=>h.id == filter)?.name || 'filtered'}.csv`;
+
+            let dataToExport = [];
+            let csvHeaders = [];
+            
+            if (isAllHubsView) {
+                // AGGREGATED VIEW
+                const aggregatedStock = {}; 
+
+                materials.forEach(mat => {
+                    let totalQty = 0;
+                    hubs.forEach(hub => {
+                        const key = `${hub.id}_${mat.id}`;
+                        totalQty += (inventory[key] || 0);
+                    });
+                    const price = parseFloat(mat.price) || 0;
+                    const totalValue = totalQty * price;
+                    
+                    if (totalQty > 0 || materials.length < 50) { 
+                        aggregatedStock[mat.id] = { ...mat, totalQty, totalValue };
+                    }
+                });
+
+                dataToExport = Object.values(aggregatedStock).map(item => [
+                    item.name,
+                    item.category,
+                    item.totalQty,
+                    item.uom,
+                    item.totalValue.toFixed(2)
+                ]);
+
+                csvHeaders = ['Material', 'Category', 'Total Stock', 'UOM', 'Total Value (INR)'];
+
+            } else {
+                // DETAILED HUB VIEW
+                const hubToRender = hubs.find(h => h.id == filter);
+                if (!hubToRender) return toast("Hub not found for export.", "error");
+
+                dataToExport = materials.map(mat => {
+                    const key = `${hubToRender.id}_${mat.id}`;
+                    const qty = inventory[key] || 0;
+                    const price = parseFloat(mat.price) || 0;
+                    const val = qty * price;
+
+                    return [
+                        hubToRender.name,
+                        mat.name,
+                        mat.category,
+                        qty,
+                        mat.uom,
+                        val.toFixed(2)
+                    ];
+                });
+                
+                csvHeaders = ['Hub Name', 'Material', 'Category', 'Stock Qty', 'UOM', 'Stock Value (INR)'];
+            }
+            
+            if (dataToExport.length === 0) return toast("No inventory data found to export.", "error");
+
+            downloadCsv(csvHeaders, dataToExport, filename);
+        }
 
         // Feature: UI Toggles
         function showTab(id) {
@@ -1070,9 +1683,16 @@
             document.querySelector(`#mobileMenu button[onclick="showTab('${id}')"]`).classList.add('text-redcliffe', 'font-bold');
             document.querySelector(`#mobileMenu button[onclick="showTab('${id}')"]`).classList.remove('text-gray-700');
             
-            // Re-render inventory if switching to its tab, to handle default view state
+            // Re-render history/inventory if needed
             if (id === 'inventory') {
                 renderInventory();
+            } else if (id === 'inward') {
+                // Ensure history view is refreshed upon opening the tab
+                renderHistory('inward', document.getElementById('inwardStartDate').value || document.getElementById('inwardEndDate').value);
+            } else if (id === 'outward') {
+                renderHistory('outward', document.getElementById('outwardStartDate').value || document.getElementById('outwardEndDate').value);
+            } else if (id === 'expenses') {
+                renderExpenses(document.getElementById('expenseStartDate').value || document.getElementById('expenseEndDate').value);
             }
         }
 
@@ -1180,7 +1800,7 @@
         };
 
 
-        // Initialize default tab appearance
+        // Initialize default tab appearance (only runs if already authenticated)
         showTab('dashboard'); 
 
     </script>
